@@ -3,7 +3,7 @@ from mysql.connector import Error
 
 from utils.project import get_name_project, create_project, get_id_project
 from utils.list import get_id_list, get_name_list, create_list
-from utils.cards import create_card, get_name_card, get_id_card
+from utils.cards import create_card, get_name_card, get_id_card, get_details_card, update_card, get_member_card, update_member
 
 
 def select_or_create_project(cursor):
@@ -108,14 +108,29 @@ def card_details(cursor, list_id, list_name, project_id, project_name, card_id, 
     print("")
     print("Enter 'v' to views card details")
     print("      'u' to update card")
+    print("      'm' to add member to card")
     print("      'b' to return to card menu")
 
     key = input()
 
     if key == 'v':
-
+        details_card = get_details_card(card_id)
+        cursor.execute(details_card)
+        details = cursor.fetchone()
+        print(details)
     elif key == 'u':
+        req_update = update_card(id)
+        for req in req_update:
+            cursor.execute(req)
+    elif key == 'm':
+        req_member = get_member_card(card_id)
+        cursor.execute(req_member)
+        member = cursor.fetchone()
+        req_new_member = update_member(id, member)
+        for req in req_new_member:
+            cursor.execute(req)
     elif key == 'b':
+        select_or_create_card_in_list(cursor, list_id, list_name, project_id, project_name)
     else:
         card_details(cursor, list_id, list_name, project_id, project_name, card_id, card_name)
 
@@ -130,7 +145,7 @@ def connect_to_mysqldb(connection):
             cursor.execute("select database();")
             record = cursor.fetchone()
             print("You're connected to database: ", record)
-            req_project = "CREATE TABLE IF NOT EXISTS project (id INT UNSIGNED NOT NULL AUTO_INCREMENT, name_project VARCHAR(255) NOT NULL, update_date TIMESTAMP, date_creation DATETIME DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id));"
+            req_project = "CREATE TABLE IF NOT EXISTS project (id INT UNSIGNED NOT NULL AUTO_INCREMENT, admin TEXT NOT NULL, name_project VARCHAR(255) NOT NULL, update_date TIMESTAMP, date_creation DATETIME DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id));"
             req_card = "CREATE TABLE IF NOT EXISTS card (id INT UNSIGNED NOT NULL AUTO_INCREMENT, list_id INT NOT NULL, name_card TEXT NOT NULL, member TEXT NOT NULL, description TEXT, tag TEXT, checklist TEXT, update_date DATETIME, deadline DATETIME, date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id));"
             req_list = "CREATE TABLE IF NOT EXISTS list (id INT UNSIGNED NOT NULL AUTO_INCREMENT, project_id INT NOT NULL, name_list TEXT, card INT, date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id));"
             cursor.execute(req_project)

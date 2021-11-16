@@ -9,6 +9,7 @@ def get_id_project(name):
 
 
 def create_project():
-    name_project = input('Enter project name')
-    req = "INSERT INTO project (name_project) VALUES ('{name_project}')".format(name_project=name_project)
+    admin = input("Enter admin's name of project")
+    name_project = input('Enter project name : ')
+    req = "INSERT INTO project (admin, name_project) VALUES ('{admin}', '{name_project}')".format(admin=admin, name_project=name_project)
     return req
