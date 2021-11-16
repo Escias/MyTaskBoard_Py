@@ -1,6 +1,16 @@
 import datetime
 
 
+def get_name_card(list_id):
+    req = "SELECT C.name_card FROM card AS C WHERE C.list_id = {}".format(list_id)
+    return req
+
+
+def get_id_card(name):
+    req = "SELECT C.id FROM card AS C WHERE C.name_card = '{name}'".format(name=name)
+    return req
+
+
 def create_card(list_id):
     member = input("Enter member")
     description = input("Enter description")

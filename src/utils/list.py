@@ -1,10 +1,10 @@
-def get_name_list():
-    req = "SELECT L.name_list FROM list AS L"
+def get_name_list(project_id):
+    req = "SELECT L.name_list FROM list AS L WHERE L.project_id = {}".format(project_id)
     return req
 
 
-def get_id_list():
-    req = "SELECT L.id FROM list AS L"
+def get_id_list(name):
+    req = "SELECT L.id FROM list AS L WHERE L.name_list = '{name}'".format(name=name)
     return req
 
 

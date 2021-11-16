@@ -4,7 +4,7 @@ def get_name_project():
 
 
 def get_id_project(name):
-    req = "SELECT P.id FROM project AS P WHERE P.name_project = {name}".format(name=name)
+    req = "SELECT P.id FROM project AS P WHERE P.name_project = '{name}'".format(name=name)
     return req
 
 
