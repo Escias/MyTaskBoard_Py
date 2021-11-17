@@ -1,3 +1,4 @@
+import sys
 import mysql.connector
 from mysql.connector import Error
 
@@ -13,6 +14,7 @@ def select_or_create_project(cursor):
         print("")
         print("Enter 'c' to create project")
         print("      's' to select project")
+        print("      'e' to exit")
 
         key = input()
 
@@ -30,8 +32,12 @@ def select_or_create_project(cursor):
                 print("Enter project name to access")
                 print(rows)
                 project_name = input()
-                project_id = get_id_project(project_name)
-                select_or_create_list_in_project(cursor, project_id, project_id)
+                project_id_req = get_id_project(project_name)
+                cursor.execute(project_id_req)
+                project_id = cursor.fetchone()
+                select_or_create_list_in_project(cursor, project_id[0], project_name)
+        elif key == 'e':
+            sys.exit()
         else:
             select_or_create_project(cursor)
 
@@ -44,10 +50,12 @@ def select_or_create_list_in_project(cursor, project_id, project_name):
         print("Enter 'c' to create list")
         print("      's' to select list")
         print("      'b' to return to project menu")
+        print("      'e' to exit")
 
         key = input()
 
         if key == 'c':
+            print(project_id)
             new_list = create_list(project_id)
             cursor.execute(new_list)
         elif key == 's':
@@ -61,10 +69,14 @@ def select_or_create_list_in_project(cursor, project_id, project_name):
                 print("Enter list name to access")
                 print(rows)
                 list_name = input()
-                list_id = get_id_list(list_name)
-                select_or_create_card_in_list(cursor, list_id, list_name, project_id, project_name)
+                list_id_req = get_id_list(list_name)
+                cursor.execute(list_id_req)
+                list_id = cursor.fetchone()
+                select_or_create_card_in_list(cursor, list_id[0], list_name, project_id, project_name)
         elif key == 'b':
             select_or_create_project(cursor)
+        elif key == 'e':
+            sys.exit()
         else:
             select_or_create_list_in_project(cursor, project_id, project_name)
 
@@ -77,8 +89,12 @@ def select_or_create_card_in_list(cursor, list_id, list_name, project_id, projec
         print("Enter 'c' to create card")
         print("      's' to select card")
         print("      'b' to return to list menu")
+        print("      'e' to exit")
 
         key = input()
+
+        list_id = str(list_id)
+        list_id.replace(',', '')
 
         if key == 'c':
             new_card = create_card(list_id)
@@ -94,10 +110,14 @@ def select_or_create_card_in_list(cursor, list_id, list_name, project_id, projec
                 print("Enter card name to access")
                 print(rows)
                 card_name = input()
-                card_id = get_id_card(card_name)
-                card_details(cursor, list_id, list_name, project_id, project_name, card_id, card_name)
+                card_id_req = get_id_card(card_name)
+                cursor.execute(card_id_req)
+                card_id = cursor.fetchone()
+                card_details(cursor, list_id, list_name, project_id, project_name, card_id[0], card_name)
         elif key == 'b':
             select_or_create_list_in_project(cursor, project_id, project_name)
+        elif key == 'e':
+            sys.exit()
         else:
             select_or_create_card_in_list(cursor, list_id, list_name, project_id, project_name)
 
@@ -110,8 +130,12 @@ def card_details(cursor, list_id, list_name, project_id, project_name, card_id, 
     print("      'u' to update card")
     print("      'm' to add member to card")
     print("      'b' to return to card menu")
+    print("      'e' to exit")
 
     key = input()
+
+    card_id = str(card_id)
+    card_id.replace(',', '')
 
     if key == 'v':
         details_card = get_details_card(card_id)
@@ -131,6 +155,8 @@ def card_details(cursor, list_id, list_name, project_id, project_name, card_id, 
             cursor.execute(req)
     elif key == 'b':
         select_or_create_card_in_list(cursor, list_id, list_name, project_id, project_name)
+    elif key == 'e':
+        sys.exit()
     else:
         card_details(cursor, list_id, list_name, project_id, project_name, card_id, card_name)
 
@@ -154,9 +180,6 @@ def connect_to_mysqldb(connection):
             select_or_create_project(cursor)
     except Error as e:
         print("Error while connecting to MySQL", e),
-
-
-
 
 
 if __name__ == '__main__':
