@@ -93,9 +93,6 @@ def select_or_create_card_in_list(cursor, list_id, list_name, project_id, projec
 
         key = input()
 
-        list_id = str(list_id)
-        list_id.replace(',', '')
-
         if key == 'c':
             new_card = create_card(list_id)
             cursor.execute(new_card)
@@ -133,9 +130,6 @@ def card_details(cursor, list_id, list_name, project_id, project_name, card_id, 
     print("      'e' to exit")
 
     key = input()
-
-    card_id = str(card_id)
-    card_id.replace(',', '')
 
     if key == 'v':
         details_card = get_details_card(card_id)
